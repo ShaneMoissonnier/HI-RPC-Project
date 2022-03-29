@@ -96,7 +96,13 @@ int main()
 
     bzero(&res, sizeof(Response));
 
-    // TODO replace with parsing 
+    // TODO replace with parsing  : faire l'appel a la fonction parse_input
+    char op1[10];
+    char op2[10];
+    char op;
+    printf("Enter an expression (ex: 2+2): ");
+    scanf("%s", op1);
+    parse_input(op1, op1, op2, &op); 
     getchar();
   }
 
