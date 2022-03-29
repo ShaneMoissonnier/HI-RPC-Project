@@ -8,6 +8,49 @@
 #include <stdbool.h>
 #include "client.h"
 
+
+//method parsing the input an expression mathematic from the user
+int parse_input(char *input, char *op1, char *op2, char *op)
+{
+    int i = 0;
+    while(input[i] != '\0')
+    {
+        if(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/')
+        {
+            *op = input[i];
+            break;
+        }
+        i++;
+    }
+    if(i == 0)
+    {
+        return -1;
+    }
+    int j = 0;
+    while(input[i] != '\0')
+    {
+        if(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/')
+        {
+            break;
+        }
+        op1[j] = input[i];
+        i++;
+        j++;
+    }
+    op1[j] = '\0';
+    j = 0;
+    i++;
+    while(input[i] != '\0')
+    {
+        op2[j] = input[i];
+        i++;
+        j++;
+    }
+    op2[j] = '\0';
+    return 0;
+}
+
+
 int main()
 {
   struct sockaddr_in serverAddr;
