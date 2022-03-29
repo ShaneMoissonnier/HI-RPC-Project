@@ -1,0 +1,4 @@
+CC = gcc
+CFLAGS = -Wall -Werror
+ARGS = $(CFLAGS)
+BUILD = $(CC) $(ARGS)
