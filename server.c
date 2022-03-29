@@ -96,7 +96,7 @@ int main()
 
   size_t n = 0;
 
-  while ((n = read(clientSocket, &req, sizeof(req))) >= 0) {
+  while ((n = read(clientSocket, &req, sizeof(req))) > 0) {
 
     printf("Bytes readed : %ld\n", n);
 
