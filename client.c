@@ -58,23 +58,6 @@ void parse_input(char *input, Request *req)
         return;
     }
 
-    //     char delim[] = op;
-    // char ** splited_input;
-    // char *token = strtok(input, delim);
-    // while (token != NULL)
-    // {
-    
-    //     token = strtok(NULL, delim);
-    //     req->params[1] = atoi(token);
-    // }
-    
-    
-        
-    //req->params[0] = atoi(token[0]);
-    //req->params[1] = atoi(token[1]);
-    
-
-
 }
 
 int main()
@@ -133,3 +116,6 @@ int main()
 
     return 0;
 }
+
+3 + 2 * 6
+3 
