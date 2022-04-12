@@ -8,7 +8,8 @@ typedef enum
   ADD = 0,
   SUB,
   MUL,
-  DIV
+  DIV,
+  POW
 } OpType;
 
 typedef struct

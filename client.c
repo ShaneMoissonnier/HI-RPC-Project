@@ -53,11 +53,47 @@ void parse_input(char *input, Request *req)
     else if(op == '/'){
         req->op=DIV;
     }
+    else if(op == '^'){
+        req->op=POW;
+    }
     else{
         printf("Invalid operation\n");
         return;
     }
 
+}
+
+//TODO : infix to postfix
+void infix_to_postfix(char *input, char *output)
+{
+    char* tmp=input;
+    char op;
+    char op1[10];
+    char op2[10];
+    int i=0;
+    size_t input_size=strlen(input);
+    //getting the first operand
+    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
+        op1[i]=tmp[i];
+        i++;
+    }
+    //getting the operator
+    op=tmp[i++];
+    int j=0;
+    //getting the second operand
+    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
+        op2[j++]=tmp[i++];
+    }
+
+    //setting the request 
+    int ope1=atoi(op1);
+    int ope2=atoi(op2);
+    sprintf(output,"%d %d %c",ope1,ope2,op);
+}
+
+//TODO : evaluate a postfix exp.
+void evalPostfix(char**){
+    
 }
 
 int main()
@@ -117,5 +153,3 @@ int main()
     return 0;
 }
 
-3 + 2 * 6
-3 

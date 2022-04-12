@@ -38,6 +38,22 @@ int processMultiplication(const Request *request, Response *response)
   return true;
 }
 
+int processPow(const Request *request, Response *response)
+{
+  int operandA = request->params[0];
+  int operandB = request->params[1];
+  int result = 1;
+  //TODO pow ne marche pas 
+  // reponse->data = pow(operandA, operandB);
+  for (int i = 0; i < operandB; i++)
+  {
+    result = result * operandA;
+  }
+  response->data = result;
+  printf("POW = %d ^ %d\n", operandA, operandB);
+  return true;
+}
+
 int processDivision(const Request *request, Response *response)
 {
   int operandA = request->params[0];
@@ -61,6 +77,8 @@ int requestProcessing(const Request *request, Response *response)
     return processMultiplication(request, response);
   case DIV:
     return processDivision(request, response);
+  case POW:
+    return processPow(request, response);
   default:
     return false;
   }
