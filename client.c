@@ -92,7 +92,7 @@ void infix_to_postfix(char *input, char *output)
 }
 
 //TODO : evaluate a postfix exp.
-void evalPostfix(char**){
+void evalPostfix(char** name){
     
 }
 
