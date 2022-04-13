@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,16 +41,10 @@ int processMultiplication(const Request *request, Response *response)
 
 int processPow(const Request *request, Response *response)
 {
+  //on doit pouvoir diminuer sa compléxité
   int operandA = request->params[0];
   int operandB = request->params[1];
-  int result = 1;
-  //TODO pow ne marche pas 
-  // reponse->data = pow(operandA, operandB);
-  for (int i = 0; i < operandB; i++)
-  {
-    result = result * operandA;
-  }
-  response->data = result;
+  response->data = pow(operandA, operandB);
   printf("POW = %d ^ %d\n", operandA, operandB);
   return true;
 }
