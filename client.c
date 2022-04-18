@@ -7,11 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "client.h"
 #include <ctype.h>
-#include <stdbool.h>
-#define MAX_ELT 20
-#define MAX_ELTSIZE 10
+#include "client.h"
+#include "serialization.h"
 
 
 int main()
