@@ -12,6 +12,9 @@ serialized_buffer_t *init_buffer()
 
 serialized_buffer_t *init_buffer_size(int size)
 {
+    if (size <= 0)
+        return NULL;
+
     serialized_buffer_t *s_buffer = (serialized_buffer_t *)malloc(sizeof(serialized_buffer_t));
     s_buffer->buffer = malloc(size);
     s_buffer->size = size;
@@ -49,7 +52,9 @@ void serialize_data(serialized_buffer_t *serialized_buffer, void *data, int type
 
 void unserialize_data(void *destination, serialized_buffer_t *serialize_buffer, int type_size)
 {
-    // TODO check params
+    if (destination == NULL)
+        return;
+    
     int available_space = serialize_buffer->size - serialize_buffer->seek_index;
 
     if (available_space < type_size)

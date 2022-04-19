@@ -2,3 +2,4 @@ CC = gcc
 CFLAGS = -Wall -Werror -g
 ARGS = $(CFLAGS)
 BUILD = $(CC) $(ARGS)
+TESTS = test_unit
