@@ -54,5 +54,7 @@ dkms.conf
 
 client
 server
+generator
+test_unit
 
 .vscode/

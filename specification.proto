@@ -1,0 +1,12 @@
+message Request {
+    int test
+}
+
+message Response {
+    int test
+}
+
+service Service {
+    param Request
+    reply Response
+} 

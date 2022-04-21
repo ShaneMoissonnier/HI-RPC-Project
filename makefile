@@ -2,7 +2,7 @@ include makefile.rules
 
 all: build
 
-build: server client test_unit
+build: server client generator test_unit
 
 server: server.o
 	$(BUILD) -o server server.o -lm
@@ -13,15 +13,20 @@ client: client.o serialization.o
 test: $(TESTS)
 	for file in $(TESTS);do ./$$file;done
 
+generator: generator.o parser.o
+	$(BUILD) -o generator generator.o parser.o
+
 CuTest.o: cutest/CuTest.c cutest/CuTest.h
-	$(CC) -c $< $(CFLAGS)
+	$(BUILD) -c $<
 
 AllTests.o: cutest/AllTests.c cutest/AllTests.h cutest/CuTest.h serialization.h
-	$(CC) -c $< $(CFLAGS)
+	$(BUILD) -c $< 
 
 test_unit: AllTests.o CuTest.o serialization.o
-	$(CC) -o $@ $^ $(CFLAGS)
-
+	$(BUILD) -o $@ $^ 
 
 clean:
-	rm -f *.o server client test_unit
+	rm -f *.o server client generator test_unit
+
+clean-generate:
+	rm -f client_stub.h server_stub.h

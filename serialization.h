@@ -15,8 +15,11 @@ typedef struct
     int seek_index;
 } serialized_buffer_t;
 
-serialized_buffer_t* init_buffer();
+
 serialized_buffer_t *init_buffer_size(int size);
+serialized_buffer_t* init_buffer();
+
+int get_buffer_available_size(serialized_buffer_t *serialized_buffer);
 
 void resize_buffer(serialized_buffer_t* serialized_buffer, int type_size);
 
