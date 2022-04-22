@@ -7,7 +7,6 @@
 #include <stdbool.h>
 
 #define MAX_WORD_SIZE 512
-
 typedef struct message_params
 {
     enum
@@ -29,6 +28,12 @@ typedef struct message
     struct message *next;
 } * message_t;
 
+typedef struct message_list
+{
+    message_t head;
+    message_t tail;
+} * message_list_t;
+
 typedef struct service
 {
     char name[MAX_WORD_SIZE];
@@ -38,6 +43,20 @@ typedef struct service
 
     struct service *next;
 } * service_t;
+
+typedef struct service_list
+{
+    service_t head;
+    service_t tail;
+} * service_list_t;
+
+typedef struct parser_result
+{
+    message_list_t message_list;
+    service_list_t service_list;
+} * parser_result_t;
+
+void replace_word_in_file(FILE *template_file, char *word_to_replace, char *word);
 
 bool compare_words(char *first_word, char *second_word);
 
@@ -49,14 +68,22 @@ bool parse_name(FILE *specification_file, char *word);
 
 bool parse_name_and_copy(FILE *specification_file, char *word, char *destination);
 
-void add_message_to_list(message_t new_message, message_t message_list);
+message_list_t init_message_list();
+
+void add_message_to_list(message_t new_message, message_list_t message_list);
 
 bool parse_params(FILE *specification_file, message_t message, char *word);
 
-bool parse_message(FILE *specification_file, message_t message_list);
+bool parse_message(FILE *specification_file, message_list_t message_list);
 
-bool parse_service(FILE *specification_file, service_t service_list);
+service_list_t init_service_list();
 
-bool parse_file(FILE *specification_file);
+void add_service_to_list(service_t new_service, service_list_t service_list);
+
+bool parse_service(FILE *specification_file, service_list_t service_list);
+
+bool parse_file(FILE *specification_file, parser_result_t result);
+
+void free_parser_result(parser_result_t parser_result);
 
 #endif

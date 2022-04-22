@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "parser.h"
 
-void generate_client_stub();
-void generate_server_stub();
+void generate_client_stub(parser_result_t parser_result);
+void generate_server_stub(parser_result_t parser_result);
 
 #endif

@@ -1,5 +1,10 @@
 #include "parser.h"
 
+void replace_word_in_file(FILE *template_file, char *word_to_replace, char *word)
+{
+    // TODO
+}
+
 bool compare_words(char *first_word, char *second_word)
 {
     return strcmp(first_word, second_word) == 0;
@@ -45,16 +50,23 @@ bool parse_name_and_copy(FILE *specification_file, char *word, char *destination
     return true;
 }
 
-void add_message_to_list(message_t new_message, message_t message_list)
+message_list_t init_message_list()
 {
-    message_list = new_message;
-    new_message->next = message_list;
+    message_list_t message_list = (message_list_t)malloc(sizeof(struct message_list));
+
+    message_t message_dummy = (message_t)malloc(sizeof(struct message));
+    message_dummy->params = NULL;
+
+    message_list->head = message_dummy;
+    message_list->tail = message_dummy;
+
+    return message_list;
 }
 
-void add_service_to_list(service_t new_service, service_t service_list)
+void add_message_to_list(message_t new_message, message_list_t message_list)
 {
-    service_list = new_service;
-    new_service->next = service_list;
+    message_list->tail->next = new_message;
+    message_list->tail = new_message;
 }
 
 bool parse_params(FILE *specification_file, message_t message, char *word)
@@ -100,7 +112,7 @@ PARAMS_PARSING_ERROR:
     return false;
 }
 
-bool parse_message(FILE *specification_file, message_t message_list)
+bool parse_message(FILE *specification_file, message_list_t message_list)
 {
     message_t new_message = (message_t)malloc(sizeof(struct message));
     char word[MAX_WORD_SIZE];
@@ -144,7 +156,25 @@ MESSAGE_PARSING_ERROR:
     return false;
 }
 
-bool parse_service(FILE *specification_file, service_t service_list)
+service_list_t init_service_list()
+{
+    service_list_t service_list = (service_list_t)malloc(sizeof(struct service_list));
+
+    service_t service_dummy = (service_t)malloc(sizeof(struct service));
+
+    service_list->head = service_dummy;
+    service_list->tail = service_dummy;
+
+    return service_list;
+}
+
+void add_service_to_list(service_t new_service, service_list_t service_list)
+{
+    service_list->tail->next = new_service;
+    service_list->tail = new_service;
+}
+
+bool parse_service(FILE *specification_file, service_list_t service_list)
 {
     service_t new_service = (service_t)malloc(sizeof(struct service));
     char word[MAX_WORD_SIZE];
@@ -181,29 +211,53 @@ SERVICE_PARSING_ERROR:
     return false;
 }
 
-bool parse_file(FILE *specification_file)
+bool parse_file(FILE *specification_file, parser_result_t result)
 {
     char word[MAX_WORD_SIZE];
 
     bool parsing_result = true;
 
-    message_t message_tail = (message_t)malloc(sizeof(struct message));
-    message_tail->params = NULL;
+    message_list_t message_list = init_message_list();
 
-    service_t service_tail = (service_t)malloc(sizeof(struct service));
+    service_list_t service_list = init_service_list();
 
     while (read_word(specification_file, word) != EOF && parsing_result)
     {
         // TODO: need refactoring
         if (compare_words(word, "message"))
         {
-            parsing_result = parse_message(specification_file, message_tail);
+            parsing_result = parse_message(specification_file, message_list);
         }
         else if (compare_words(word, "service"))
         {
-            parsing_result = parse_service(specification_file, service_tail);
+            parsing_result = parse_service(specification_file, service_list);
         }
     }
 
+    result->message_list = message_list;
+    result->service_list = service_list;
+
     return parsing_result;
+}
+
+void free_parser_result(parser_result_t parser_result)
+{
+    message_t current_message = parser_result->message_list->head;
+    service_t current_service = parser_result->service_list->head;
+
+    while(current_message != NULL)
+    {
+        message_t next_message = current_message->next;
+        free(current_message);
+        current_message = next_message;
+    }
+    
+    while(current_service != NULL)
+    {
+        service_t next_service = current_service->next;
+        free(current_service);
+        current_service = next_service;
+    }
+
+    free(parser_result);
 }
