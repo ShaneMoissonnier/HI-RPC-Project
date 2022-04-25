@@ -1,8 +1,60 @@
 #include "parser.h"
 
-void replace_word_in_file(FILE *template_file, char *word_to_replace, char *word)
+// TODO : need some refactoring
+// hacky way to replace substring
+void replace_in_string(char *string, char *word_to_replace, char *word)
 {
-    // TODO
+    char *substring = strstr(string, word_to_replace);
+
+    while (substring != NULL)
+    {
+
+        char begin_word[MAX_WORD_SIZE];
+
+        int size = (substring - string);
+
+        memcpy(begin_word, string, size);
+
+        begin_word[size] = '\0';
+
+        char *after_word = (char *)(substring + strlen(word_to_replace));
+
+        strcat(begin_word, word);
+        strcat(begin_word, after_word);
+
+        strcpy(string, begin_word);
+
+        substring = strstr(string, word_to_replace);
+    }
+}
+
+void replace_word_in_file(FILE *template_file, FILE *output_file, char *word_to_replace, char *word)
+{
+    char readed_line[MAX_WORD_SIZE];
+
+    rewind(template_file);
+    while (!feof(template_file))
+    {
+        fgets(readed_line, MAX_WORD_SIZE, template_file);
+
+        replace_in_string(readed_line, word_to_replace, word);
+
+        write_word(output_file, readed_line);
+    }
+}
+
+char *enum_variable_type_to_string(int variable_type)
+{
+    if (variable_type == INT)
+    {
+        return "int";
+    }
+    else if (variable_type == DOUBLE)
+    {
+        return "double";
+    }
+
+    return "";
 }
 
 bool compare_words(char *first_word, char *second_word)
@@ -12,7 +64,12 @@ bool compare_words(char *first_word, char *second_word)
 
 int read_word(FILE *specification_file, char *word)
 {
-    return fscanf(specification_file, " %512s", word);
+    return fscanf(specification_file, "%512s", word);
+}
+
+int write_word(FILE *specification_file, char *word)
+{
+    return fprintf(specification_file, "%s", word);
 }
 
 bool read_word_and_compare(FILE *specification_file, char *word_to_compare)
@@ -71,10 +128,7 @@ void add_message_to_list(message_t new_message, message_list_t message_list)
 
 bool parse_params(FILE *specification_file, message_t message, char *word)
 {
-    message_params_t params;
-
-    message->params = (message_params_t)malloc(sizeof(struct message_params));
-    params = message->params;
+    message_params_t params = (message_params_t)malloc(sizeof(struct message_params));
 
     bool is_param_valid = true;
 
@@ -115,6 +169,8 @@ PARAMS_PARSING_ERROR:
 bool parse_message(FILE *specification_file, message_list_t message_list)
 {
     message_t new_message = (message_t)malloc(sizeof(struct message));
+    new_message->params = NULL;
+
     char word[MAX_WORD_SIZE];
 
     int params_count = 0;
@@ -124,7 +180,7 @@ bool parse_message(FILE *specification_file, message_list_t message_list)
 
     strcpy(new_message->name, word);
 
-    printf("Message name : %s\n", word);
+    // printf("Message name : %s\n", word);
 
     if (!read_word_and_compare(specification_file, "{"))
         goto MESSAGE_PARSING_ERROR;
@@ -182,7 +238,7 @@ bool parse_service(FILE *specification_file, service_list_t service_list)
     if (!parse_name_and_copy(specification_file, word, new_service->name))
         goto SERVICE_PARSING_ERROR;
 
-    printf("Service name : %s\n", word);
+    // printf("Service name : %s\n", word);
 
     if (!read_word_and_compare(specification_file, "{"))
         goto SERVICE_PARSING_ERROR;
@@ -245,14 +301,14 @@ void free_parser_result(parser_result_t parser_result)
     message_t current_message = parser_result->message_list->head;
     service_t current_service = parser_result->service_list->head;
 
-    while(current_message != NULL)
+    while (current_message != NULL)
     {
         message_t next_message = current_message->next;
         free(current_message);
         current_message = next_message;
     }
-    
-    while(current_service != NULL)
+
+    while (current_service != NULL)
     {
         service_t next_service = current_service->next;
         free(current_service);

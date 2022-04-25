@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX_WORD_SIZE 512
+#define MAX_STRUCT_SIZE 4096
+#define MAX_WORD_SIZE 4096
 typedef struct message_params
 {
     enum
@@ -56,11 +57,15 @@ typedef struct parser_result
     service_list_t service_list;
 } * parser_result_t;
 
-void replace_word_in_file(FILE *template_file, char *word_to_replace, char *word);
+void replace_in_string(char *string, char *word_to_replace, char *word);
+
+char *enum_variable_type_to_string(int variable_type);
 
 bool compare_words(char *first_word, char *second_word);
 
 int read_word(FILE *specification_file, char *word);
+
+int write_word(FILE *specification_file, char *word);
 
 bool read_word_and_compare(FILE *specification_file, char *word_to_compare);
 

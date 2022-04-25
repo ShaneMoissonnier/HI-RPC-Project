@@ -1,0 +1,78 @@
+#ifndef __CLIENT_STUB_H__
+#define __CLIENT_STUB_H__
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+[struct_header]
+typedef struct client
+{
+    int socketFd;
+} *client_t;
+
+client_t create_client(char *client_addr, int client_port)
+{
+    client_t client = (client_t) malloc(sizeof(struct client));
+    
+    client->socketFd = socket(AF_INET, SOCK_STREAM, 0);
+
+    bool initialization;
+    if (setsockopt(client->socketFd, SOL_SOCKET, SO_REUSEADDR, &initialization, sizeof(int)) == -1)
+    {
+        printf("Error during socket configuration!\n");
+        free(client);
+        return NULL;
+    }
+
+    struct sockaddr_in serverAddr;
+
+    bzero(&serverAddr, sizeof(serverAddr));
+
+    serverAddr.sin_addr.s_addr = inet_addr(client_addr);
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(client_port);
+
+    int connect_result = connect(client->socketFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr_in));
+    if (connect_result < 0)
+    {
+        printf("Error during connection!\n");
+        free(client);
+        return NULL;
+    }
+
+    return client;
+}
+
+void close_client(client_t client)
+{
+    if (client == NULL)
+        return;
+
+    shutdown(client->socketFd, 0);
+    free(client);
+}
+
+int rpc_send(client_t client, [struct_param]_t request, [struct_reply]_t response)
+{
+    if (send(client->socketFd, request, sizeof(request), 0) < 0)
+    {
+        printf("Unable to send request\n");
+        return -1;
+    }
+
+    printf("Sended request.\n");
+
+    if (recv(client->socketFd, response, sizeof(response), 0) < 0)
+    {
+        printf("Unable to receive response\n");
+        return -2;
+    }
+
+    return 0;
+}
+
+#endif

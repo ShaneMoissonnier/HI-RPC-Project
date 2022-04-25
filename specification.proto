@@ -1,9 +1,11 @@
 message Request {
-    int test
+    int op
+    int operandA
+    int operandB
 }
 
 message Response {
-    int test
+    int result
 }
 
 service Service {

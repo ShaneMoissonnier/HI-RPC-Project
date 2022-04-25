@@ -1,0 +1,93 @@
+#ifndef __SERVER_STUB_H__
+#define __SERVER_STUB_H__
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdbool.h>
+
+[struct_header]
+typedef struct server
+{
+    int clientFd;
+    int serverFd;
+} *server_t;
+
+server_t create_server(int server_port)
+{
+    server_t server = (server_t) malloc(sizeof(struct server));
+    
+    server->serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server->serverFd == -1)
+    {
+        printf("Unable to initialize server's socket!\n");
+        free(server);
+        return NULL;
+    }
+
+    bool initialization;
+    if (setsockopt(server->serverFd, SOL_SOCKET, SO_REUSEADDR, &initialization, sizeof(int)) == -1)
+    {
+        printf("Error during socket configuration!\n");
+        free(server);
+        return NULL;
+    }
+
+    struct sockaddr_in serverAddr;
+    bzero(&serverAddr, sizeof(serverAddr));
+
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = htons(INADDR_ANY);
+    serverAddr.sin_port = htons(server_port);
+
+    int bind_result = bind(server->serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+    if (bind_result < 0)
+    {
+       printf("Unable to bind server's socket\n");
+       free(server);
+       return NULL; 
+    }
+
+    return server;
+}
+
+int start_server(server_t server, [struct_reply]_t(*callback)([struct_param]_t))
+{
+    struct sockaddr_in client;
+    
+    listen(server->serverFd, 1);
+
+    int received_size = 0;
+
+    while(true)
+    {
+        int sock_size = sizeof(struct sockaddr_in);
+
+        server->clientFd = accept(server->serverFd, (struct sockaddr *)&client, (socklen_t*)&sock_size); 
+        if (server->clientFd < 0)
+        {
+            printf("Client connection failed\n");
+            return -1;
+        }
+
+        printf("Client connection %d\n", server->clientFd);
+
+        [struct_param]_t client_request = ([struct_param]_t)malloc(sizeof([struct_param]_t));
+
+        while((received_size = recv(server->clientFd, client_request, sizeof(client_request), 0)) > 0)
+        {
+            [struct_reply]_t server_response = callback(client_request);
+
+            printf("Created response : %d\n", server_response->result);
+
+            write(server->clientFd, server_response, sizeof(server_response));
+        }
+
+        free(client_request);
+    } 
+}
+
+#endif

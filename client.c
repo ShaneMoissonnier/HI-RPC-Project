@@ -11,57 +11,30 @@
 #include "client.h"
 #include "serialization.h"
 
-
 int main()
 {
-    struct sockaddr_in serverAddr;
-    int socketFd = socket(AF_INET, SOCK_STREAM, 0);
+    client_t client = create_client("127.0.0.1", 22000);
 
-    bzero(&serverAddr, sizeof(serverAddr));
-
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(22000);
-
-    bool initialization;
-    if (setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &initialization, sizeof(int)) == -1)
+    if (client == NULL)
     {
-        printf("Error during socket configuration!\n");
+        printf("Unable to connect client!\n");
         return -1;
     }
 
-    // Set server address to localhost "127.0.0.1"
-    inet_pton(AF_INET, "127.0.0.1", &(serverAddr.sin_addr));
+    Request_t req = (Request_t) malloc(sizeof(Request_t));
+    Response_t resp = (Response_t)malloc(sizeof(Response_t));
 
-    // Connect to the server
-    connect(socketFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr_in));
+    req->op = 0;
+    req->operandA = 10;
+    req->operandB = 2;
 
-    Request req = {
-        .ack = ACK,
-        .id = 0,
-    };
+    rpc_send(client, req, resp);
 
-    Response res = {0};
+    printf("Server's response : %d\n", resp->result);
 
-    while (true)
-    {
-        // parse_input(expression, &req);
-        printRequest(req);
-
-        // Send a request to the server
-        (void)(write(socketFd, (char *)&req, sizeof(Request)));
-
-        // Read server's response
-        (void)(read(socketFd, (char *)&res, sizeof(Response)));
-
-        printResponse(res);
-        bzero(&res, sizeof(Response));
-
-
-        getchar();
-    }
-
-    close(socketFd);
-
+    free(req);
+    free(resp);
+    close_client(client);
     return 0;
 }
 

@@ -2,18 +2,19 @@
 #define _SERVER_H_
 
 #include "common.h"
+#include "server_stub.h"
 #include <math.h>
 
-int processAddition(const Request *request, Response *response);
+int processAddition(const Request_t request, Response_t response);
 
-int processSubstraction(const Request *request, Response *response);
+int processSubstraction(const Request_t request, Response_t response);
 
-int processMultiplication(const Request *request, Response *response);
+int processMultiplication(const Request_t request, Response_t response);
 
-int processDivision(const Request *request, Response *response);
+int processDivision(const Request_t request, Response_t response);
 
-int processPow(const Request *request, Response *response);
+int processPow(const Request_t request, Response_t response);
 
-int requestProcessing(const Request *request, Response *response);
+Response_t requestProcessing(Request_t request);
 
 #endif

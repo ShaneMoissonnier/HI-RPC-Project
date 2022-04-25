@@ -8,131 +8,91 @@
 #include <string.h>
 #include <stdbool.h>
 #include "server.h"
+#include "serialization.h"
 
-int processAddition(const Request *request, Response *response)
+int processAddition(const Request_t request, Response_t response)
 {
-  int operandA = request->params[0];
-  int operandB = request->params[1];
+  int operandA = request->operandA;
+  int operandB = request->operandB;
   
-  response->data = operandA + operandB;
+  response->result = operandA + operandB;
   printf("ADD = %d + %d\n", operandA, operandB);
   return true;
 }
 
-int processSubstraction(const Request *request, Response *response)
+int processSubstraction(const Request_t request, Response_t response)
 {
-  int operandA = request->params[0];
-  int operandB = request->params[1];
+  int operandA = request->operandA;
+  int operandB = request->operandB;
   
-  response->data = operandA - operandB;
+  response->result = operandA - operandB;
   printf("SUB = %d - %d\n", operandA, operandB);
   return true;
 }
 
-int processMultiplication(const Request *request, Response *response)
+int processMultiplication(const Request_t request, Response_t response)
 {
-  int operandA = request->params[0];
-  int operandB = request->params[1];
+  int operandA = request->operandA;
+  int operandB = request->operandB;
   
-  response->data = operandA * operandB;
+  response->result = operandA * operandB;
   printf("MUL = %d * %d\n", operandA, operandB);
   return true;
 }
 
-int processPow(const Request *request, Response *response)
+int processPow(const Request_t request, Response_t response)
 {
   //on doit pouvoir diminuer sa compléxité
-  int operandA = request->params[0];
-  int operandB = request->params[1];
-  response->data = pow(operandA, operandB);
+  int operandA = request->operandA;
+  int operandB = request->operandB;
+
+  response->result = pow(operandA, operandB);
   printf("POW = %d ^ %d\n", operandA, operandB);
   return true;
 }
 
-int processDivision(const Request *request, Response *response)
+int processDivision(const Request_t request, Response_t response)
 {
-  int operandA = request->params[0];
-  int operandB = request->params[1];
+  int operandA = request->operandA;
+  int operandB = request->operandB;
   
-  response->data = operandA / operandB;
+  response->result = operandA / operandB;
   printf("DIV = %d / %d\n", operandA, operandB);
 
   return true;
 }
 
-int requestProcessing(const Request *request, Response *response)
+Response_t requestProcessing(Request_t request)
 {
+  Response_t response = (Response_t) malloc(sizeof(Response_t));
+
   switch (request->op)
   {
   case ADD:
-    return processAddition(request, response);
+    processAddition(request, response);
+    break;
   case SUB:
-    return processSubstraction(request, response);
+    processSubstraction(request, response);
+    break;
   case MUL:
-    return processMultiplication(request, response);
+    processMultiplication(request, response);
+    break;
   case DIV:
-    return processDivision(request, response);
+    processDivision(request, response);
+    break;
   case POW:
-    return processPow(request, response);
+    processPow(request, response);
+    break;
   default:
-    return false;
+    break;
   }
+  return response;
 }
 
 int main()
 {
-  struct sockaddr_in serverAddr;
-  int listenSocketFd = socket(AF_INET, SOCK_STREAM, 0);
+  server_t server = create_server(22000);
 
-  bool initialization;
-  if (setsockopt(listenSocketFd, SOL_SOCKET, SO_REUSEADDR, &initialization, sizeof(int)) == -1)
-  {
-    printf("Error during socket configuration!\n");
-    return -1;
-  }
-
-  bzero(&serverAddr, sizeof(serverAddr));
-
-  serverAddr.sin_family = AF_INET;
-  serverAddr.sin_addr.s_addr = htons(INADDR_ANY);
-  serverAddr.sin_port = htons(22000);
-
-  bind(listenSocketFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
-
-  listen(listenSocketFd, 1);
-
-  // Wait for client connection request
-  int clientSocket = accept(listenSocketFd, (struct sockaddr *)NULL, NULL);
-
-  Request req = {0};
-  Response res = {0};
-
-  size_t n = 0;
-
-  while ((n = read(clientSocket, &req, sizeof(req))) > 0) {
-
-    printf("Bytes readed : %ld\n", n);
-
-    if (req.ack != ACK) {
-      printf("ACK Problem (%d)\n", req.ack);
-      continue;
-    }
-
-    printRequest(req);
-
-    res.ack = req.ack;
-    res.id = req.id;
-    res.status = (bool)requestProcessing(&req, &res);
-
-    printResponse(res);
-
-    (void)(write(clientSocket, (char *)&res, sizeof(Response)));
-
-    bzero(&req, sizeof(Request));
-    bzero(&res, sizeof(Response));
-  }
-
-  close(clientSocket);
-
+  start_server(server, requestProcessing);
   return 0;
 }

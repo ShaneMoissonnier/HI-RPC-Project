@@ -2,13 +2,17 @@ include makefile.rules
 
 all: build
 
-build: server client generator test_unit
+build: generator test_unit
 
 server: server.o
 	$(BUILD) -o server server.o -lm
 
 client: client.o serialization.o
 	$(BUILD) -o client client.o serialization.o
+
+instance:
+	make client
+	make server
 
 test: $(TESTS)
 	for file in $(TESTS);do ./$$file;done
@@ -26,7 +30,8 @@ test_unit: AllTests.o CuTest.o serialization.o
 	$(BUILD) -o $@ $^ 
 
 clean:
-	rm -f *.o server client generator test_unit
+	rm -f *.o server client generator test_unit replace.txt
+	make clean-generate
 
 clean-generate:
 	rm -f client_stub.h server_stub.h
