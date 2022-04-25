@@ -28,21 +28,6 @@ void replace_in_string(char *string, char *word_to_replace, char *word)
     }
 }
 
-void replace_word_in_file(FILE *template_file, FILE *output_file, char *word_to_replace, char *word)
-{
-    char readed_line[MAX_WORD_SIZE];
-
-    rewind(template_file);
-    while (!feof(template_file))
-    {
-        fgets(readed_line, MAX_WORD_SIZE, template_file);
-
-        replace_in_string(readed_line, word_to_replace, word);
-
-        write_word(output_file, readed_line);
-    }
-}
-
 char *enum_variable_type_to_string(int variable_type)
 {
     if (variable_type == INT)
