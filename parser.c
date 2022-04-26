@@ -303,68 +303,71 @@ void free_parser_result(parser_result_t parser_result)
     free(parser_result);
 }
 
+void parse_operand(char *input, char *operand, int *i)
+{
+    size_t input_size = strlen(input);
+    int j = 0;
+
+    if (input[*i] == '-' || input[*i] == '+')
+    {
+        operand[j] = input[*i];
+        *i = *i + 1;
+        j++;
+    }
+
+    while ((*i < input_size) && (isdigit(input[*i]) != 0))
+    {
+        operand[j] = input[*i];
+        *i = *i + 1;
+        j++;
+    }
+
+    return;
+}
+
 math_operation_t parse_input(char *input)
-{ 
-    char op;
+{
+    char operation;
     char operandA[20] = {0};
     char operandB[20] = {0};
 
-    size_t input_size = strlen(input);
-
-    math_operation_t math_operation = (math_operation_t) malloc(sizeof(struct math_operation));
+    math_operation_t math_operation = (math_operation_t)malloc(sizeof(struct math_operation));
     bzero(math_operation, sizeof(struct math_operation));
 
     int i = 0;
 
     // getting the first operand
-    if(input[i]=='-' || input[i]=='+'){
-        operandA[i]=input[i];
-        i++;
-    }
+    parse_operand(input, operandA, &i);
 
-    while((i<input_size)&&(isdigit(input[i])!= 0)){
-        operandA[i]=input[i];
-        i++;
-    }
+    // getting the operator
+    operation = input[i++];
 
-    //getting the operator
-    op=input[i++];
-    int j=0;
+    // getting the second operand
+    parse_operand(input, operandB, &i);
 
-    //getting the second operand
-    if(input[i]=='-' || input[i]=='+'){
-        operandA[i]=input[i];
-        i++;
-    }
-
-    while((i<input_size)&&(isdigit(input[i])!= 0)){
-        operandB[j++]=input[i++];
-    }
-
-    //setting the request 
+    // setting the request
     math_operation->operandA = atoi(operandA);
     math_operation->operandB = atoi(operandB);
-    
-    if(op == '+'){
-        math_operation->operation=ADD;
-    }
-    else if(op == '-'){
-        math_operation->operation=SUB;
-    }
-    else if(op == '*'){
-        math_operation->operation=MUL;
-    }
-    else if(op == '/'){
-        math_operation->operation=DIV;
-    }
-    else if(op == '^'){
-        math_operation->operation=POW;
-    }
-    else{
+
+    switch (operation)
+    {
+    case '+':
+        math_operation->operation = ADD;
+        break;
+    case '-':
+        math_operation->operation = SUB;
+        break;
+    case '*':
+        math_operation->operation = MUL;
+        break;
+    case '/':
+        math_operation->operation = DIV;
+        break;
+    default:
         printf("Invalid operation\n");
         free(math_operation);
         return NULL;
-    }
+    };
 
     return math_operation;
 }

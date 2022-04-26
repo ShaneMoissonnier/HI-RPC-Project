@@ -101,6 +101,8 @@ bool parse_file(FILE *specification_file, parser_result_t result);
 
 void free_parser_result(parser_result_t parser_result);
 
+void parse_operand(char *input, char *operand, int *i);
+
 math_operation_t parse_input(char *input);
 
 #endif
