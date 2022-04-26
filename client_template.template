@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "serialization.h"
 
 [struct_header]
 typedef struct client
@@ -58,7 +59,7 @@ void close_client(client_t client)
 
 int rpc_send(client_t client, [struct_param]_t request, [struct_reply]_t response)
 {
-    if (send(client->socketFd, request, sizeof(request), 0) < 0)
+    if (send(client->socketFd, request, sizeof(struct [struct_param]), 0) < 0)
     {
         printf("Unable to send request\n");
         return -1;

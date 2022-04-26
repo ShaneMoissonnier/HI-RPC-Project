@@ -1,15 +1,4 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
 #include "client.h"
-#include "serialization.h"
 
 int main()
 {
@@ -24,13 +13,19 @@ int main()
     Request_t req = (Request_t) malloc(sizeof(Request_t));
     Response_t resp = (Response_t)malloc(sizeof(Response_t));
 
-    req->op = 0;
+    req->operation = 2;
     req->operandA = 10;
-    req->operandB = 2;
+    req->operandB = 27;
 
-    rpc_send(client, req, resp);
+    // TODO: replace while condition to close connection
+    while(true)
+    {
+        printf("Send operation : %d %d %d\n", req->operandA, req->operation, req->operandB);
+        rpc_send(client, req, resp);
+        printf("Server's response : %d\n", resp->result);
 
-    printf("Server's response : %d\n", resp->result);
+        getchar();
+    }
 
     free(req);
     free(resp);

@@ -1,6 +1,8 @@
 include makefile.rules
 
 all: build
+	./generator specification.proto
+	make instance
 
 build: generator test_unit
 

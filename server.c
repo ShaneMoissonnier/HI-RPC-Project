@@ -66,7 +66,7 @@ Response_t requestProcessing(Request_t request)
 {
   Response_t response = (Response_t) malloc(sizeof(Response_t));
 
-  switch (request->op)
+  switch (request->operation)
   {
   case ADD:
     processAddition(request, response);

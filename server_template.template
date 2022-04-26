@@ -56,6 +56,12 @@ server_t create_server(int server_port)
 
 int start_server(server_t server, [struct_reply]_t(*callback)([struct_param]_t))
 {
+    if (server == NULL)
+    {
+        printf("Server's instance is null\n");
+        return -1;
+    }
+    
     struct sockaddr_in client;
     
     listen(server->serverFd, 1);
@@ -75,10 +81,12 @@ int start_server(server_t server, [struct_reply]_t(*callback)([struct_param]_t))
 
         printf("Client connection %d\n", server->clientFd);
 
-        [struct_param]_t client_request = ([struct_param]_t)malloc(sizeof([struct_param]_t));
+        [struct_param]_t client_request = ([struct_param]_t)malloc(sizeof(struct [struct_param]));
 
-        while((received_size = recv(server->clientFd, client_request, sizeof(client_request), 0)) > 0)
+        while((received_size = recv(server->clientFd, client_request, sizeof(struct [struct_param]), 0)) > 0)
         {
+            printf("Received request : %d %d %d\n", client_request->operandA, client_request->operation, client_request->operandB);
+            
             [struct_reply]_t server_response = callback(client_request);
 
             printf("Created response : %d\n", server_response->result);

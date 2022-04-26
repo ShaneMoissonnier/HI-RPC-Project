@@ -1,5 +1,5 @@
 message Request {
-    int op
+    int operation
     int operandA
     int operandB
 }

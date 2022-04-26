@@ -43,7 +43,10 @@ char *generate_struct(parser_result_t parser_result)
         char *variable_name = current_message->name;
         char *params_string_list = params_string;
 
-        snprintf(struct_string, MAX_WORD_SIZE, "typedef struct %s \n{\n%s\n} *%s_t;\n\n", variable_name, params_string_list, variable_name);
+        // For now packed attribute is needed because serialization is not used 
+        // source : https://stackoverflow.com/a/13119155
+        // TODO: use serialization
+        snprintf(struct_string, MAX_WORD_SIZE, "typedef struct %s \n{\n%s\n} __attribute__((packed)) *%s_t;\n\n", variable_name, params_string_list, variable_name);
 
         strcat(struct_string_list, struct_string);
 
