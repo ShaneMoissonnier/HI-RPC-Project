@@ -305,58 +305,66 @@ void free_parser_result(parser_result_t parser_result)
 
 math_operation_t parse_input(char *input)
 { 
-    char* tmp=input;
     char op;
-    char op1[20];
-    char op2[20];
-    int i=0;
-    size_t input_size=strlen(input);
-    math_operation_t req = (math_operation_t) malloc(sizeof(math_operation_t));
-    //getting the first operand
-    if(tmp[i]=='-' || tmp[i]=='+'){
-        op1[i]=tmp[i];
+    char operandA[20] = {0};
+    char operandB[20] = {0};
+
+    size_t input_size = strlen(input);
+
+    math_operation_t math_operation = (math_operation_t) malloc(sizeof(struct math_operation));
+    bzero(math_operation, sizeof(struct math_operation));
+
+    int i = 0;
+
+    // getting the first operand
+    if(input[i]=='-' || input[i]=='+'){
+        operandA[i]=input[i];
         i++;
     }
-    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
-        op1[i]=tmp[i];
+
+    while((i<input_size)&&(isdigit(input[i])!= 0)){
+        operandA[i]=input[i];
         i++;
     }
+
     //getting the operator
-    op=tmp[i++];
+    op=input[i++];
     int j=0;
+
     //getting the second operand
-    if(tmp[i]=='-' || tmp[i]=='+'){
-        op1[i]=tmp[i];
+    if(input[i]=='-' || input[i]=='+'){
+        operandA[i]=input[i];
         i++;
     }
-    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
-        op2[j++]=tmp[i++];
+
+    while((i<input_size)&&(isdigit(input[i])!= 0)){
+        operandB[j++]=input[i++];
     }
 
     //setting the request 
-    int ope1=atoi(op1);
-    int ope2=atoi(op2);
-    req->operandA=ope1;
-    req->operandB=ope2;
+    math_operation->operandA = atoi(operandA);
+    math_operation->operandB = atoi(operandB);
     
     if(op == '+'){
-        req->operation=ADD;
+        math_operation->operation=ADD;
     }
     else if(op == '-'){
-        req->operation=SUB;
+        math_operation->operation=SUB;
     }
     else if(op == '*'){
-        req->operation=MUL;
+        math_operation->operation=MUL;
     }
     else if(op == '/'){
-        req->operation=DIV;
+        math_operation->operation=DIV;
     }
     else if(op == '^'){
-        req->operation=POW;
+        math_operation->operation=POW;
     }
     else{
         printf("Invalid operation\n");
+        free(math_operation);
         return NULL;
     }
-    return req;
+
+    return math_operation;
 }

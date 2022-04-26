@@ -7,6 +7,8 @@ Request_t convert_math_to_request(math_operation_t math_operation)
         return NULL;
 
     Request_t req = malloc(sizeof(struct Request));
+    bzero(req, sizeof(struct Request));
+
     req->operandB = math_operation->operandB;
     req->operandA = math_operation->operandA;
     req->operation = math_operation->operation;
@@ -33,6 +35,8 @@ int main()
     while (true)
     {
         printf("Enter an expression (ex: 2+2): ");
+        bzero(expression, sizeof(char) * 20);
+
         scanf("%s", expression);
 
         if (strcmp(expression, "exit") == 0)
@@ -51,10 +55,12 @@ int main()
         rpc_send(client, req, resp);
         printf("Server's response : %d\n", resp->result);
 
+        free(math_operation);
         free(req);
         getchar();
     }
 
+    free(expression);
     free(resp);
     close_client(client);
     return 0;
