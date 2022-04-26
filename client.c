@@ -3,6 +3,8 @@
 
 Request_t convertStruct(math_operation_t math_operation)
 {
+    if(math_operation==NULL)
+        return NULL;
     Request_t req=malloc(sizeof(struct Request));
     req->operandB=math_operation->operandB;
 	req->operandA=math_operation->operandA;
@@ -42,7 +44,10 @@ int main()
         }        
         math_operation_t math_operation = parse_input(expression);
         req = convertStruct(math_operation);
-        
+        if(req == NULL){
+            printf("unknown operation !\n");
+            continue;
+        }
         printf("Send operation : %d %d %d\n", req->operandA, req->operation, req->operandB);
         rpc_send(client, req, resp);
         printf("Server's response : %d\n", resp->result);

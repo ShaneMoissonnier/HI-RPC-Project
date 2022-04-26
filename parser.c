@@ -313,6 +313,10 @@ math_operation_t parse_input(char *input)
     size_t input_size=strlen(input);
     math_operation_t req = (math_operation_t) malloc(sizeof(math_operation_t));
     //getting the first operand
+    if(tmp[i]=='-' || tmp[i]=='+'){
+        op1[i]=tmp[i];
+        i++;
+    }
     while((i<input_size)&&(isdigit(tmp[i])!= 0)){
         op1[i]=tmp[i];
         i++;
@@ -321,6 +325,10 @@ math_operation_t parse_input(char *input)
     op=tmp[i++];
     int j=0;
     //getting the second operand
+    if(tmp[i]=='-' || tmp[i]=='+'){
+        op1[i]=tmp[i];
+        i++;
+    }
     while((i<input_size)&&(isdigit(tmp[i])!= 0)){
         op2[j++]=tmp[i++];
     }
@@ -330,6 +338,7 @@ math_operation_t parse_input(char *input)
     int ope2=atoi(op2);
     req->operandA=ope1;
     req->operandB=ope2;
+    
     if(op == '+'){
         req->operation=ADD;
     }
