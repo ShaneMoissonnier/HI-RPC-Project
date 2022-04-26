@@ -32,7 +32,7 @@ test_unit: AllTests.o CuTest.o serialization.o
 	$(BUILD) -o $@ $^ 
 
 clean:
-	rm -f *.o server client generator test_unit replace.txt
+	rm -f *.o server client generator test_unit
 	make clean-generate
 
 clean-generate:
