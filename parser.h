@@ -5,9 +5,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include "common.h"
 
 #define MAX_STRUCT_SIZE 4096
 #define MAX_WORD_SIZE 4096
+
 typedef struct message_params
 {
     enum
@@ -57,6 +60,13 @@ typedef struct parser_result
     service_list_t service_list;
 } * parser_result_t;
 
+typedef struct math_operation
+{
+    int operation;
+    int operandA;
+    int operandB;
+} * math_operation_t;
+
 void replace_in_string(char *string, char *word_to_replace, char *word);
 
 char *enum_variable_type_to_string(int variable_type);
@@ -90,5 +100,7 @@ bool parse_service(FILE *specification_file, service_list_t service_list);
 bool parse_file(FILE *specification_file, parser_result_t result);
 
 void free_parser_result(parser_result_t parser_result);
+
+math_operation_t parse_input(char *input);
 
 #endif

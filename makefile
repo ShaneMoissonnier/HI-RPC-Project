@@ -9,8 +9,8 @@ build: generator test_unit
 server: server.o
 	$(BUILD) -o server server.o -lm
 
-client: client.o serialization.o
-	$(BUILD) -o client client.o serialization.o
+client: client.o serialization.o parser.o
+	$(BUILD) -o client client.o serialization.o parser.o
 
 instance:
 	make client

@@ -302,3 +302,52 @@ void free_parser_result(parser_result_t parser_result)
 
     free(parser_result);
 }
+
+math_operation_t parse_input(char *input)
+{ 
+    char* tmp=input;
+    char op;
+    char op1[20];
+    char op2[20];
+    int i=0;
+    size_t input_size=strlen(input);
+    math_operation_t req = (math_operation_t) malloc(sizeof(math_operation_t));
+    //getting the first operand
+    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
+        op1[i]=tmp[i];
+        i++;
+    }
+    //getting the operator
+    op=tmp[i++];
+    int j=0;
+    //getting the second operand
+    while((i<input_size)&&(isdigit(tmp[i])!= 0)){
+        op2[j++]=tmp[i++];
+    }
+
+    //setting the request 
+    int ope1=atoi(op1);
+    int ope2=atoi(op2);
+    req->operandA=ope1;
+    req->operandB=ope2;
+    if(op == '+'){
+        req->operation=ADD;
+    }
+    else if(op == '-'){
+        req->operation=SUB;
+    }
+    else if(op == '*'){
+        req->operation=MUL;
+    }
+    else if(op == '/'){
+        req->operation=DIV;
+    }
+    else if(op == '^'){
+        req->operation=POW;
+    }
+    else{
+        printf("Invalid operation\n");
+        return NULL;
+    }
+    return req;
+}
