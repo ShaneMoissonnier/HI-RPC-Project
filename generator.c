@@ -66,6 +66,13 @@ void generate_client_stub(parser_result_t parser_result)
 
     service_t service = parser_result->service_list->head->next;
 
+    // Just to be safe
+    if (service == NULL)
+    {
+        printf("Cannot generate client stub!\n");
+        return;
+    }
+
     rewind(template_file);
     while (!feof(template_file))
     {
@@ -98,6 +105,13 @@ void generate_server_stub(parser_result_t parser_result)
     char *struct_string = generate_struct(parser_result);
 
     service_t service = parser_result->service_list->head->next;
+
+    // Just to be safe
+    if (service == NULL)
+    {
+        printf("Cannot generate server stub!\n");
+        return;
+    }
 
     rewind(template_file);
     while (!feof(template_file))

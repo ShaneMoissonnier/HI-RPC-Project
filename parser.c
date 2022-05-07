@@ -165,8 +165,6 @@ bool parse_message(FILE *specification_file, message_list_t message_list)
 
     strcpy(new_message->name, word);
 
-    // printf("Message name : %s\n", word);
-
     if (!read_word_and_compare(specification_file, "{"))
         goto MESSAGE_PARSING_ERROR;
 
@@ -223,8 +221,6 @@ bool parse_service(FILE *specification_file, service_list_t service_list)
     if (!parse_name_and_copy(specification_file, word, new_service->name))
         goto SERVICE_PARSING_ERROR;
 
-    // printf("Service name : %s\n", word);
-
     if (!read_word_and_compare(specification_file, "{"))
         goto SERVICE_PARSING_ERROR;
 
@@ -277,6 +273,12 @@ bool parse_file(FILE *specification_file, parser_result_t result)
 
     result->message_list = message_list;
     result->service_list = service_list;
+
+    // if parsing has failed
+    if (result->message_list->head->next == NULL || result->service_list->head->next == NULL)
+    {
+        return false;
+    }
 
     return parsing_result;
 }
