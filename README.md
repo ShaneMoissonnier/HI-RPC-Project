@@ -35,8 +35,8 @@ service Service {
 }
 ```
 
-> `message` represents
-> `service` represents
+> `message` represents data structure to be send to the server
+> `service` represents data structure to be send as a response to the client
 
 ## Instructions
 
@@ -72,3 +72,5 @@ service Service {
 ## Potential future improvements
 
 -   Support more variable type in specification file.
+-   Create a more complete IDL.
+-   Add more unit tests.
